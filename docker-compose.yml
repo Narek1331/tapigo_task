@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  # PostgreSQL database
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: your_database_name
+      POSTGRES_USER: your_database_user
+      POSTGRES_PASSWORD: your_database_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Laravel application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: your_database_name
+      DB_USERNAME: your_database_user
+      DB_PASSWORD: your_database_password
+      APP_KEY: your_laravel_app_key
+    volumes:
+      - .:/var/www/html
+
+volumes:
+  postgres_data:
